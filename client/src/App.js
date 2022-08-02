@@ -3,7 +3,8 @@ import './App.css';
 import {Route} from "react-router-dom"
 import LandingPage  from './components/LandingPage';
 import Home  from './components/Home';
-import NavBar from './components/NavBar';
+import RecipeCreator from './components/RecipeCreator';
+import RecipeDetail from './components/RecipeDetail';
 
 function App() {
   return (
@@ -11,8 +12,8 @@ function App() {
       <React.Fragment>
         <Route exact path="/" component= {LandingPage}/>
         <Route exact path="/home" component= {Home}/>
-        <Route exact path="/home" component= {NavBar}/>
-        
+        <Route exact path="/recipes/" component= {RecipeCreator}/>
+        <Route exact path="/recipes/:id" component = {RecipeDetail}/>
         
       </React.Fragment>
     </div>

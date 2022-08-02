@@ -18,22 +18,24 @@ const getApiInfo = async () => {
     `https://api.spoonacular.com/recipes/complexSearch?apiKey=${APIKEY}&number=100&addRecipeInformation=true`
   );
   const infoRecipes = await apiUrl.data.results.map((each) => {
-    var stepByStep = "";
+    var stepByStep = [];
     if (each.analyzedInstructions[0]) {
       const stepsInfo = each.analyzedInstructions[0].steps;
       stepsInfo.forEach((i) => {
-        stepByStep += i.number + ". " + i.step;
+        stepByStep = [...stepByStep, {number: i.number, step : i.step}];
       });
     }
-    console.log(each.image)
+
+
     return {
       id: each.id,
       name: each.title,
       summary: each.summary,
       healthScore: each.healthScore,
-      stepByStep: stepByStep,
+      steps: stepByStep,
       diets: each.diets.map((e) => e),
-      image: each.image
+      image: each.image,
+      dishTypes: each.dishTypes.map((e) => e)
     };
   });
   return infoRecipes;
@@ -42,13 +44,20 @@ const getApiInfo = async () => {
 // Funcion encargada de traer informacion de la DataBase
 const getDbInfo = async () => {
   try {
-    const infoRecipes = await Recipe.findAll({
+    const recipes = await Recipe.findAll({
       include: {
         model: Diet,
       },
     });
-
-    return infoRecipes;
+    let dataRecipes = recipes.map(d => d.dataValues)
+    
+    return dataRecipes.map(re => {
+      return {
+        ...re,
+        diets: re.diets.map(diet => diet.name)
+      }
+    })
+      
   } catch (e) {
     console.log(e);
   }
@@ -58,6 +67,7 @@ const getDbInfo = async () => {
 const getAllRecipes = async () => {
   const apiRecipes = await getApiInfo();
   const dbRecipes = await getDbInfo();
+  console.log(dbRecipes)
   const allRecipes = apiRecipes.concat(dbRecipes);
 
   return allRecipes;
@@ -66,8 +76,13 @@ const getAllRecipes = async () => {
 //Funcion encargada de cargar las dietas en la base de datos
 
 const loadDiets = async () => {
-  const load = await apiDiets.forEach((e) => Diet.create({ name: e }));
-  return load;
+  apiDiets.forEach(async (diet) => {
+    await Diet.findOrCreate({
+      where: {
+        name: diet,
+      },
+    });
+  })
 };
 
 
@@ -111,17 +126,11 @@ router.get("/recipes/:id", async (req, res) => {
 
 router.get("/diet", async (req, res) => {
   try {
-    apiDiets.forEach(async (diet) => {
-      await Diet.findOrCreate({
-        where: {
-          name: diet,
-        },
-      });
-    });
+    loadDiets()
     const dbDiets = await Diet.findAll();
     res.status(200).send(dbDiets);
   } catch (e) {
-    next(e);
+    res.status(400).send(e);
   }
 });
 
@@ -142,7 +151,7 @@ router.post("/recipes", async (req, res, next) => {
     });
     res.status(200).send("Receta creada");
   } catch (e) {
-    next(e);
+    res.status(400).send(e);
   }
 });
 

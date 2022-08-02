@@ -3,7 +3,7 @@ import React from "react";
 export default function Pagination ({recipesPerPage, allRecipes, pagination}) {
     const pageNumbers = []
 
-    for(let i = 0; i <= Math.ceil(allRecipes/recipesPerPage); i++){
+    for(let i = 1; i <= Math.ceil(allRecipes/recipesPerPage); i++){
         pageNumbers.push(i)
     }
 
@@ -13,7 +13,7 @@ export default function Pagination ({recipesPerPage, allRecipes, pagination}) {
                 {
                     pageNumbers &&
                     pageNumbers.map(number =>{
-                        <a onClick={()=>pagination(number)}>{number}</a>
+                        return <button key={number.toString()}><a onClick={()=>pagination(number)}>{number}</a></button>
                     })
                 }
             </ul>
