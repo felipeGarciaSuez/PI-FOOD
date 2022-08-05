@@ -99,9 +99,8 @@ router.get("/recipes", async (req, res) => {
       console.log(found)
 
 
-      found.length ?
-      res.status(200).json(found) : 
-      res.status(404).send("No se encontraron recetas con ese con " + name)
+      if(found.length !== []) res.status(200).json(found)
+      else res.status(404).send("Recipe not found :(")
 
     }else {
       res.status(200).json(allRecipes);
@@ -143,6 +142,7 @@ router.post("/recipes", async (req, res, next) => {
       summary,
       healthScore,
       steps,
+      image: "https://www.happyeater.com/images/default-food-image.jpg"
     });
 
     diets.forEach(async (d) => {

@@ -36,18 +36,19 @@ const rootReducer = (state = initialState, action) =>{
                 recipes : recipesFiltered
             }
 
-        case "ORDER_BY_NAME" : 
+        case "ORDER_BY_NAME" :
             var recipesOrder = []
-            
-            var ascending = state.recipes.sort((a, b) => {
-                if(a.name.toUpperCase() > b.name.toUpperCase()) return 1
-                if(a.name.toUpperCase() < b.name.toUpperCase()) return -1
-                return 0
-                })
+            if(action.payload === "default") recipesOrder = state.recipes
+            else{
+                var ascending = state.recipes.sort((a, b) => {
+                    if(a.name.toUpperCase() > b.name.toUpperCase()) return 1
+                    if(a.name.toUpperCase() < b.name.toUpperCase()) return -1
+                    return 0
+                    })
 
-            if(action.payload === "asc") recipesOrder = ascending
-            else if(action.payload === "desc") recipesOrder = ascending.reverse()
-
+                if(action.payload === "asc") recipesOrder = ascending
+                else if(action.payload === "desc") recipesOrder = ascending.reverse()
+            }
             return{
                 ...state,
                 recipes : recipesOrder
@@ -55,15 +56,17 @@ const rootReducer = (state = initialState, action) =>{
 
         case "ORDER_BY_HEALTH" : 
             var recipesOrder = []
-            
-            var ascending = state.recipes.sort((a, b) => {
-                if(a.healthScore > b.healthScore) return 1
-                if(a.healthScore < b.healthScore) return -1
-                return 0
-                })
+            if(action.payload === "default") recipesOrder = state.recipes
+            else{
+                var ascending = state.recipes.sort((a, b) => {
+                    if(a.healthScore > b.healthScore) return 1
+                    if(a.healthScore < b.healthScore) return -1
+                    return 0
+                    })
 
-            if(action.payload === "asc") recipesOrder = ascending
-            else if(action.payload === "desc") recipesOrder = ascending.reverse()
+                if(action.payload === "asc") recipesOrder = ascending
+                else if(action.payload === "desc") recipesOrder = ascending.reverse()
+            }
 
             return{
                 ...state,
@@ -72,6 +75,8 @@ const rootReducer = (state = initialState, action) =>{
 
 
         case "RECIPE_SEARCH" :
+            console.log(action.payload)
+            if(action.payload.length < 1) return alert("Recipe not found :(")
             return{
                 ...state,
                 recipes: action.payload

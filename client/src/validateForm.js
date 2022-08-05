@@ -5,6 +5,8 @@ export default function validateForm (input) {
         errors.name = "Ingresa un nombre para la receta"
     } else if((!input.name.trim() || !/^[a-zA-Z\ áéíóúÁÉÍÓÚñÑ\s]*$/.test(input.name) || input.name.length < 2)) {
         errors.name = "El nombre de la receta no debe contener caracteres especiales y debe contener mas de 2 caracteres"
+    }else if(input.name.length > 30){
+        errors.name = "El nombre de la receta debe contener como maximo 30 caracteres!"
     }
 
     if (!input.summary) {

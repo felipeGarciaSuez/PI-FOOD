@@ -46,10 +46,12 @@ export const orderByHealth = (payload) => {
 }
 
 export const getRecipeSearch = (name) => {
+
     return async (dispatch) => {
-        return fetch(`http://localhost:3001/recipes?name=${name}`)
-        .then(response => response.json())
-        .then(json => dispatch({type: "RECIPE_SEARCH", payload: json}))
+
+            return fetch(`http://localhost:3001/recipes?name=${name}`)
+            .then(response => response.json())
+            .then(json => dispatch({type: "RECIPE_SEARCH", payload: json}))
     }
 }
 

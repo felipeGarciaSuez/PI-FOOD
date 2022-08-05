@@ -24,15 +24,18 @@
 }
 
 .card_title {
+    display: flex;
     text-align: center;
     padding: 20px;
-    height: 80px;
-    max-height: 70px;
-    min-height: 70px;
+    height: 80%;
     margin: 0 auto;
     font-family: 'Roboto Condensed';
     font-size: 25px;
     font-weight: 700;
+}
+
+.card_title h3 {
+    height: max-content;
 }
 
 .diets_info {

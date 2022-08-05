@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import { getAllDiets, postRecipe} from "../redux/actions"
 import validateForm from "../validateForm"
+import styles from "./styles/RecipeCreator.module.css"
 
 
 export default function RecipeCreator() {
@@ -33,17 +34,24 @@ export default function RecipeCreator() {
 
     let handleSubmitStep = (e) => {
         e.preventDefault()
-        const newStep = { number: input.steps[input.steps.length - 1].number + 1}
-        setInput({...input, steps: [...input.steps, newStep]})
+        if(input.steps.length < 15) {
+            const newStep = { number: input.steps[input.steps.length - 1].number + 1}
+            setInput({...input, steps: [...input.steps, newStep]})
+        } else {
+            alert("La receta no puede tener mas de 15 pasos!!")
+        }
     }
 
     let handleDeleteStep = (e) => {
         e.preventDefault()
 
         const newSteps = input.steps;
-        if (newSteps.length > 1) newSteps.pop()
+        if (newSteps.length > 1) {
+            newSteps.pop()
+            setInput({ ...input, steps: newSteps })
+        }
 
-        setInput({ ...input, steps: newSteps })
+        else alert("No puedes tener menos de un paso para la receta!!")
     }
 
     let handleSubmit = (e) => {
@@ -70,55 +78,73 @@ export default function RecipeCreator() {
 
 
     return (
-        <div>
-            <Link to="/home">Volver</Link>
-            <h1>Crea tu receta</h1>
+        
+        <div className={styles.frame}>
+             <Link to="/home">Volver</Link>
+            <h1 className={styles.title}>Crea tu receta</h1>
             <form onSubmit={(e) => handleSubmit(e)}>
-                <label>Nombre: </label>
-                {errors.name && <span> {errors.name}</span>}
-                <input 
-                    type = "text"
-                    value={input.name}
-                    onChange={(e) => handleInputChange(e)}
-                    name = "name"
-                />
+                <div className= {styles.top_form}>
+                    <div className={styles.input_div}>
+                        <label>Nombre: </label>
+                        {errors.name && <span> {errors.name}</span>}
+                        <input 
+                            type = "text"
+                            value={input.name}
+                            onChange={(e) => handleInputChange(e)}
+                            name = "name"
+                        />
+                        
+                    </div>
+                    
 
-                <label>Resumen del plato: </label>
-                {errors.summary && <span> {errors.summary}</span>}
-                <input 
-                    type = "text"
-                    value={input.summary}
-                    onChange={(e) => handleInputChange(e)}
-                    name = "summary"
-                />
+                    <div className={styles.input_div}>
+                        <label>Resumen del plato: </label>
+                        {errors.summary && <span> {errors.summary}</span>}
+                        <input 
+                            type = "text"
+                            value={input.summary}
+                            onChange={(e) => handleInputChange(e)}
+                            name = "summary"
+                        />
+                        
+                    </div>
+                    
 
-                <label>Puntuacion de salud: </label>
-                {errors.healthScore && <p> {errors.healthScore}</p>}
-                <input 
-                    type = "number"
-                    value={input.healthScore}
-                    onChange={(e) => handleInputChange(e)}
-                    name = "healthScore"
-                />
+                    <div className={styles.input_div}>
+                        <label>Puntuacion de salud: </label>
+                        <input 
+                            type = "number"
+                            value={input.healthScore}
+                            onChange={(e) => handleInputChange(e)}
+                            name = "healthScore"
+                            className= {styles.input_health}
+                        />
+                        {errors.healthScore && <span> {errors.healthScore}</span>}
+                    </div>
+                    
+                    <div className={styles.input_div}>
+                        <label>Agregar pasos: </label>
+                        <button onClick={handleSubmitStep}>+</button>
+                        <button onClick={handleDeleteStep}>-</button>
+                        {errors.steps && <span>{errors.steps}</span>}
+                    </div>
+                    
+                
+                    <ol>
+                        <h2>Pasos:</h2>
+                        {input.steps.map(step => (
+                            <li key={step.number}>
+                                {step.number}.  <input type="text" id={step.number} name="step" onChange={handleStepsChange} autoComplete="off" />
+                            </li>
+                        ))}
+                    </ol>
+                </div>       
 
-                <label>Agregar pasos: </label>
-                <button onClick={handleSubmitStep}>+</button>
-                <button onClick={handleDeleteStep}>-</button>
-                {errors.steps && <p>{errors.steps}</p>}
-                <ol>
-                    {input.steps.map(step => (
-                        <li key={step.number}>
-                            <input type="text" id={step.number} name="step" onChange={handleStepsChange} autoComplete="off" />
-                        </li>
-                    ))}
-                </ol>
-
-
-
+                <div className= {styles.diets_container}>
                 {
                     diets?.map(d => {
-                        return(<div key={d.id}>
-                            <label>{d.name}</label>
+                        return(<div key={d.id} className = {styles.diets_box}>
+                            <label>{d.name.charAt(0).toUpperCase() + d.name.slice(1)}</label>
                             <input 
                                 type = "checkbox" name = {d.name} value = {d.name} onChange={handleDietsChange}
                             />
@@ -126,7 +152,8 @@ export default function RecipeCreator() {
                         )
                     })
                 }
-                <button type="submit">Crear receta</button>
+                </div>
+                <button id ={styles.create_button} type="submit">Crear receta</button>
             </form>
 
             

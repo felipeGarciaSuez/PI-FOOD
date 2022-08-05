@@ -8,7 +8,6 @@ import SearchBar from "./SearchBar";
 import styles from "./styles/Home.module.css"
 
 
-
 export default function Home() {
 
     const dispatch = useDispatch()
@@ -27,6 +26,20 @@ export default function Home() {
 
     const pagination = (pageNumber) => {
         setCurrentPage(pageNumber)
+    }
+
+    const nextPage = (totalPages) => {
+        if(currentPage < totalPages){
+            setCurrentPage(currentPage + 1)
+        }
+    }
+
+    const prevPage = () => {
+        console.log("entro")
+        if(currentPage > 1){
+            console.log("entro el if")
+            setCurrentPage(currentPage - 1)
+        }
     }
 
 
@@ -63,35 +76,48 @@ export default function Home() {
         <div>
             
             <div className={styles.navBar}>
-                <h1>FOOD API</h1>
-                <div><Link to = "/recipes">Crear receta</Link></div>
-                <div onClick={(e) => handleSubmitChange(e)}>Voler a cargar las recetas</div>
+                <div className={styles.container_left}>
+                    <div className={styles.wrapper}>
+                        <div className = {styles.searchBar}><SearchBar page={setCurrentPage}/></div>
+                        <div className = {`${styles.icon} ${styles.add_recipe}`} >
+                            <div className={styles.tooltip}>Crear receta</div>
+                            <span><Link to = "/recipes"><i class="fa-solid fa-plus" className={styles.fa_add}></i></Link></span>
+                        </div>
+                        <div className = {`${styles.icon} ${styles.reset_recipes}`}>
+                            <div className={styles.tooltip} >Recargar recetas</div>
+                            <span onClick={(e) => handleSubmitChange(e)}><i class="fa-solid fa-rotate-right" className={styles.fa_reload}></i></span>
+                        </div>
+                        
+                    </div>
+                    <div className={styles.filters}>
+                        <select className = {styles.select} onChange= {e => handleOrderByName(e)}>
+                            <option value="default">Ordenar por nombre</option>
+                            <option value="asc">Nombre ascendente</option>
+                            <option value="desc">Nombre descendente</option>
+                        </select>
 
-                <div>
-                    <select onChange= {e => handleOrderByName(e)}>
-                        <option value="asc">Nombre ascendente</option>
-                        <option value="desc">Nombre descendente</option>
-                    </select>
+                        <select className = {styles.select}  onChange= {e => handleOrderByHealth(e)}>
+                            <option value="default">Ordenar por salud</option>
+                            <option value="asc">Salud ascendente</option>
+                            <option value="desc">Salud descendente</option>
+                        </select>
 
-                    <select onChange= {e => handleOrderByHealth(e)}>
-                        <option value="asc">Health score ascendente</option>
-                        <option value="desc">Health score descendente</option>
-                    </select>
-
-                    <select onChange= {e => handleFilterStatus(e)}>
-                        <option value="all">Todas las dietas</option>
-                        {
-                            allDiets?.map(d => {
-                                return (
-                                    <option value= {d.name} key={d.id}>
-                                        {d.name.charAt(0).toUpperCase() + d.name.slice(1)}
-                                    </option>
-                                )
-                            })
-                        }
-                    </select>
-                </div>   
-                    <SearchBar page={setCurrentPage}/>
+                        <select className = {styles.select}  onChange= {e => handleFilterStatus(e)}>
+                            <option value="all">Todas las dietas</option>
+                            {
+                                allDiets?.map(d => {
+                                    return (
+                                        <option value= {d.name} key={d.id}>
+                                            {d.name.charAt(0).toUpperCase() + d.name.slice(1)}
+                                        </option>
+                                    )
+                                })
+                            }
+                        </select>
+                    </div>   
+                        
+                </div>
+                <img className={styles.logo} src="/images/foodlogo.png"/>
                 
             </div>
             <div id={styles.cardContainer}>
@@ -105,7 +131,13 @@ export default function Home() {
                         </div>
                 )})
                 }</div>
-                <Pagination recipesPerPage={recipesPerPage} allRecipes={allRecipes.length} pagination={pagination} />
+                <Pagination 
+                    recipesPerPage={recipesPerPage} 
+                    allRecipes={allRecipes.length} 
+                    pagination={pagination} 
+                    prevPage = {prevPage} 
+                    nextPage = {nextPage}
+                />
               
         </div>
     )
