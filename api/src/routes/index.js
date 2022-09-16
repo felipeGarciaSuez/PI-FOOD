@@ -1,5 +1,6 @@
 const { Router } = require("express");
-const { Recipe, Diet } = require("../db");
+const { resource } = require("../app");
+const { Recipe, Diet, DishTypes } = require("../db");
 require("dotenv").config();
 const axios = require("axios").default;
 const { apiDiets } = require("./diets");
@@ -50,7 +51,6 @@ const getDbInfo = async () => {
       },
     });
     let dataRecipes = recipes.map(d => d.dataValues)
-    
     return dataRecipes.map(re => {
       return {
         ...re,
@@ -65,12 +65,31 @@ const getDbInfo = async () => {
 
 // Funcion encargada de concatenar todas las recetas y devolverlas
 const getAllRecipes = async () => {
-  const apiRecipes = await getApiInfo();
+  await loadDiets()
   const dbRecipes = await getDbInfo();
-  console.log(dbRecipes)
-  const allRecipes = apiRecipes.concat(dbRecipes);
-
-  return allRecipes;
+  if(dbRecipes.length < 99) {
+    const apiRecipes = await getApiInfo();
+    apiRecipes.forEach(async recipe => {
+      const res = await Recipe.create({
+        name: recipe.name,
+        summary: recipe.summary,
+        healthScore: recipe.healthScore,
+        image: recipe.image,
+        steps: recipe.steps
+      })
+      recipe.diets.forEach(async d=> {
+        let diet = await Diet.findOne({ where: { name: d } });
+        await res.addDiet(diet.id)
+      })
+      recipe.dishTypes.forEach(async dish => {
+        let dishInfo = await DishTypes.findOrCreate({where: {name: dish}})
+        await res.addDishType(dishInfo.id)
+      })
+    })
+  const final = await getDbInfo() 
+  return final
+  }
+  return dbRecipes
 };
 
 //Funcion encargada de cargar las dietas en la base de datos
@@ -90,7 +109,7 @@ const loadDiets = async () => {
 router.get("/recipes", async (req, res) => {
     const allRecipes = await getAllRecipes();
     const { name } = req.query;
-    loadDiets()
+    console.log(allRecipes)
 
   try {
 
