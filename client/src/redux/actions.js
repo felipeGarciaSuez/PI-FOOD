@@ -9,7 +9,6 @@ export const getAllRecipes = () =>{
     return async (dispatch) => {
         //Le pedimos que haga un fetch a nuestro backend y lo transforme en formato JSON
         const res = await axios.get("/recipes")
-        console.log(res)
         //Le agregamos una referencia(GET_ALL_RECIPES) y un resultado (su payload)
          dispatch({type: "GET_ALL_RECIPES", payload: res.data})
     }
@@ -17,19 +16,15 @@ export const getAllRecipes = () =>{
 
 export const getRecipeDetail = (id) => {
     return async (dispatch) => {
-      return axios.get(`/recipes/${id}`)
-      .then(response => response.json())
-      .then(json => dispatch({type: "GET_RECIPES_DETAIL", payload: json}))
-      .then(resultado => console.log(resultado))
-      
+      const res = await axios.get(`/recipes/${id}`)
+      dispatch({type: "GET_RECIPES_DETAIL", payload: res.data})
     };
 }
 
 export const getAllDiets = () => {
     return async (dispatch) => {
-        return axios.get("/diet")
-        .then(response => response.json())
-        .then(json => dispatch({type: "GET_ALL_DIETS", payload: json}))
+        const res = await axios.get("/diet")
+        dispatch({type: "GET_ALL_DIETS", payload: res.data})
     }
 }
 
@@ -46,12 +41,9 @@ export const orderByHealth = (payload) => {
 }
 
 export const getRecipeSearch = (name) => {
-
     return async (dispatch) => {
-
-            return axios.get(`/recipes?name=${name}`)
-            .then(response => response.json())
-            .then(json => dispatch({type: "RECIPE_SEARCH", payload: json}))
+        const res = await axios.get(`/recipes?name=${name}`)
+        dispatch({type: "RECIPE_SEARCH", payload: res.data})
     }
 }
 
