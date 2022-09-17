@@ -11,7 +11,7 @@ export const getAllRecipes = () =>{
         const res = await axios.get("/recipes")
         console.log(res)
         //Le agregamos una referencia(GET_ALL_RECIPES) y un resultado (su payload)
-         dispatch({type: "GET_ALL_RECIPES", payload: res})
+         dispatch({type: "GET_ALL_RECIPES", payload: res.data})
     }
 }
 
