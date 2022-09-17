@@ -8,10 +8,10 @@ import axios from "axios"
 export const getAllRecipes = () =>{
     return async (dispatch) => {
         //Le pedimos que haga un fetch a nuestro backend y lo transforme en formato JSON
-        return axios.get("/recipes")
-        .then(response => response.json())
+        const res = await axios.get("/recipes")
+        console.log(res)
         //Le agregamos una referencia(GET_ALL_RECIPES) y un resultado (su payload)
-        .then(json => dispatch({type: "GET_ALL_RECIPES", payload: json}))
+         dispatch({type: "GET_ALL_RECIPES", payload: res})
     }
 }
 
